@@ -49,8 +49,25 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+html.nav-open,
 body.nav-open {
   overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.nav-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  touch-action: none;
+}
+
+body.nav-open header.site-header {
+  background: #fff;
+  color: #000;
+  mix-blend-mode: normal;
+  border-bottom-color: var(--ll);
 }
 
 a {
@@ -182,6 +199,10 @@ nav.main a.on::after {
   display: none;
 }
 
+.nav-close {
+  display: none;
+}
+
 #search {
   position: fixed;
   top: calc(58px + env(safe-area-inset-top, 0px));
@@ -255,6 +276,16 @@ nav.main a.on::after {
   nav.main.open {
     transform: none;
     visibility: visible;
+    touch-action: pan-y;
+  }
+
+  .nav-close {
+    display: inline-flex;
+    align-items: center;
+    margin-top: auto;
+    min-height: 48px;
+    padding: 22px 0 8px;
+    align-self: flex-start;
   }
 
   nav.main a {
