@@ -32,13 +32,13 @@ export default async function ProductPage(
       <ProductDetail product={product} />
 
       <div className="auth">
-        <div>
+        <div className="rv">
           <p className="lab" style={{ marginBottom: 22 }}>
             Authenticity
           </p>
           <q>Every pair is carefully selected and inspected before being listed.</q>
         </div>
-        <div>
+        <div className="rv">
           <p className="lab" style={{ marginBottom: 22 }}>
             Exchange policy
           </p>
@@ -63,7 +63,7 @@ export default async function ProductPage(
       </div>
 
       <section>
-        <div className="sh">
+        <div className="sh rv">
           <h2
             className="disp"
             style={{ fontSize: "clamp(34px, 6vw, 90px)" }}

@@ -10,7 +10,7 @@ export default function NewArrivalsPage() {
 
   return (
     <>
-      <section className="shophead">
+      <section className="shophead rv">
         <p className="lab mute">Latest listings</p>
         <h1 className="disp">
           New

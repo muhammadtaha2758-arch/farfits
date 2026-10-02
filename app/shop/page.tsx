@@ -28,7 +28,7 @@ export default async function ShopPage(props: PageProps<"/shop">) {
 
   return (
     <>
-      <section className="shophead">
+      <section className="shophead rv">
         <p className="lab mute">
           {category || "Everything"} / {list.length} result
           {list.length === 1 ? "" : "s"}

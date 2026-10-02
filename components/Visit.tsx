@@ -4,7 +4,7 @@ import { MAP, SITE } from "@/lib/constants";
 export function Visit() {
   return (
     <section className="visit">
-      <div>
+      <div className="rv">
         <p className="lab" style={{ marginBottom: 24 }}>
           Store
         </p>

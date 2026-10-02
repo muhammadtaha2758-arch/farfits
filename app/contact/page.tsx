@@ -32,7 +32,7 @@ export default function ContactPage() {
 
   return (
     <section className="two-c">
-      <div className="prose">
+      <div className="prose rv">
         <p className="lab">Contact</p>
         <h1 className="disp">
           Say
@@ -61,7 +61,7 @@ export default function ContactPage() {
           Karachi — {SITE.hours}
         </p>
       </div>
-      <form className="form" onSubmit={onSubmit}>
+      <form className="form rv" onSubmit={onSubmit}>
         <label className="lab">
           Name
           <input

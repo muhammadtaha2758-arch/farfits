@@ -73,7 +73,7 @@ export default function HomePage() {
       </div>
 
       <section>
-        <div className="sh">
+        <div className="sh rv">
           <h2 className="disp">
             The
             <br />
@@ -99,7 +99,7 @@ export default function HomePage() {
       </section>
 
       <section style={{ paddingTop: 0 }}>
-        <div className="sh">
+        <div className="sh rv">
           <h2
             className="disp"
             style={{ fontSize: "clamp(34px, 6vw, 90px)" }}
@@ -118,7 +118,7 @@ export default function HomePage() {
       </section>
 
       <section className="about">
-        <div>
+        <div className="rv">
           <p className="lab" style={{ marginBottom: 28 }}>
             About
           </p>
@@ -148,6 +148,7 @@ export default function HomePage() {
           </Link>
         </div>
         <Photo
+          className="rv"
           src="/editorial/editorial-detail.jpg"
           alt="Close detail of a perforated leather toe"
           ratio="3/4"
@@ -155,7 +156,7 @@ export default function HomePage() {
       </section>
 
       <section>
-        <div className="sh">
+        <div className="sh rv">
           <h2
             className="disp"
             style={{ fontSize: "clamp(34px, 6vw, 90px)" }}

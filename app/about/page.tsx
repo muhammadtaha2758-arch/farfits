@@ -9,7 +9,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <section style={{ paddingBottom: 0 }}>
+      <section className="rv" style={{ paddingBottom: 0 }}>
         <p className="lab">About FARFITS</p>
         <h1
           className="disp"
@@ -29,11 +29,12 @@ export default function AboutPage() {
       </section>
       <section className="two-c" style={{ alignItems: "start" }}>
         <Photo
+          className="rv"
           src="/editorial/editorial-shelf.jpg"
           alt="A row of selected shoes on a plaster shelf"
           ratio="4/5"
         />
-        <div className="prose" style={{ paddingTop: "5vw" }}>
+        <div className="prose rv" style={{ paddingTop: "5vw" }}>
           <p
             style={{
               fontSize: "clamp(20px, 2vw, 28px)",
