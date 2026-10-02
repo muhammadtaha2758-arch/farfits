@@ -21,6 +21,10 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "ff-cart";
 
+function unique(slugs: string[]) {
+  return [...new Set(slugs.filter(Boolean))];
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -28,7 +32,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      setCart(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      setCart(Array.isArray(parsed) ? unique(parsed) : []);
     } catch {
       setCart([]);
     }
@@ -56,15 +61,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     (slug: string) => {
-      if (cart.includes(slug)) {
-        toast("Already in your bag — one of one");
-        return false;
-      }
-      setCart((prev) => [...prev, slug]);
-      toast("Added to bag");
-      return true;
+      let added = false;
+      setCart((prev) => {
+        if (prev.includes(slug)) return prev;
+        added = true;
+        return [...prev, slug];
+      });
+      // Updater runs sync in event handlers — toast after knowing outcome
+      if (added) toast("Added to bag");
+      else toast("Already in your bag — one of one");
+      return added;
     },
-    [cart, toast],
+    [toast],
   );
 
   const remove = useCallback((slug: string) => {

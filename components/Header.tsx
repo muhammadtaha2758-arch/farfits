@@ -1,39 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  FormEvent,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { products } from "@/lib/products";
 import { useCart } from "./CartProvider";
 
 const NAV = [
-  { href: "/shop", label: "Shop" },
-  { href: "/new-arrivals", label: "New Arrivals" },
-  { href: "/shop?c=Sneakers", label: "Sneakers" },
-  { href: "/shop?c=Men", label: "Men" },
-  { href: "/shop?c=Women", label: "Women" },
-  { href: "/about", label: "About" },
-];
+  { href: "/shop", label: "Shop", match: { path: "/shop", c: null } },
+  { href: "/new-arrivals", label: "New Arrivals", match: { path: "/new-arrivals" } },
+  {
+    href: "/shop?c=Sneakers",
+    label: "Sneakers",
+    match: { path: "/shop", c: "Sneakers" },
+  },
+  { href: "/shop?c=Men", label: "Men", match: { path: "/shop", c: "Men" } },
+  {
+    href: "/shop?c=Women",
+    label: "Women",
+    match: { path: "/shop", c: "Women" },
+  },
+  { href: "/about", label: "About", match: { path: "/about" } },
+] as const;
 
-export function Header() {
+function HeaderInner() {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { cart } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [over, setOver] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const isHome = pathname === "/";
+  const category = searchParams.get("c");
 
   useEffect(() => {
     setMenuOpen(false);
     setSearchOpen(false);
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     document.body.classList.toggle("nav-open", menuOpen);
     return () => document.body.classList.remove("nav-open");
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const id = window.setTimeout(() => searchInputRef.current?.focus(), 30);
+    return () => window.clearTimeout(id);
+  }, [searchOpen]);
 
   useEffect(() => {
     if (!isHome) {
@@ -59,8 +83,24 @@ export function Header() {
 
   function onSearchSubmit(e: FormEvent) {
     e.preventDefault();
-    router.push(`/shop?q=${encodeURIComponent(query)}`);
+    router.push(`/shop?q=${encodeURIComponent(query.trim())}`);
     setSearchOpen(false);
+  }
+
+  function toggleMenu() {
+    setMenuOpen((v) => {
+      const next = !v;
+      if (next) setSearchOpen(false);
+      return next;
+    });
+  }
+
+  function toggleSearch() {
+    setSearchOpen((v) => {
+      const next = !v;
+      if (next) setMenuOpen(false);
+      return next;
+    });
   }
 
   return (
@@ -77,8 +117,12 @@ export function Header() {
         >
           {NAV.map((item) => {
             const active =
-              item.href === pathname ||
-              (item.href.startsWith("/shop?") && pathname === "/shop");
+              pathname === item.match.path &&
+              ("c" in item.match
+                ? item.match.c === null
+                  ? !category
+                  : category === item.match.c
+                : true);
             return (
               <Link
                 key={item.href}
@@ -95,7 +139,9 @@ export function Header() {
           <button
             type="button"
             id="bs"
-            onClick={() => setSearchOpen((v) => !v)}
+            aria-expanded={searchOpen}
+            aria-controls="search"
+            onClick={toggleSearch}
           >
             Search
           </button>
@@ -110,7 +156,9 @@ export function Header() {
             id="bg"
             type="button"
             aria-label="Menu"
-            onClick={() => setMenuOpen((v) => !v)}
+            aria-expanded={menuOpen}
+            aria-controls="nv"
+            onClick={toggleMenu}
           >
             Menu
           </button>
@@ -120,10 +168,12 @@ export function Header() {
         <form onSubmit={onSearchSubmit}>
           <input
             id="si"
+            ref={searchInputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search brand or model"
             aria-label="Search"
+            autoComplete="off"
           />
         </form>
         <div id="sres" className="lab">
@@ -145,5 +195,13 @@ export function Header() {
         </div>
       </div>
     </>
+  );
+}
+
+export function Header() {
+  return (
+    <Suspense fallback={<header className="site-header" id="hd" />}>
+      <HeaderInner />
+    </Suspense>
   );
 }

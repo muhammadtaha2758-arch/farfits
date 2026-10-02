@@ -1,16 +1,33 @@
 "use client";
 
-import { FormEvent } from "react";
+import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { useCart } from "@/components/CartProvider";
 import { IG, SITE } from "@/lib/constants";
 
 export default function ContactPage() {
   const { toast } = useCart();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    toast("Opening Instagram");
-    window.open(IG, "_blank");
+    const body = [
+      `Hi FARFITS — message from the site:`,
+      `Name: ${name}`,
+      `Email: ${email}`,
+      "",
+      message,
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(body);
+      toast("Message copied — opening Instagram");
+    } catch {
+      toast("Opening Instagram");
+    }
+    window.open(IG, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -47,21 +64,37 @@ export default function ContactPage() {
       <form className="form" onSubmit={onSubmit}>
         <label className="lab">
           Name
-          <input required autoComplete="name" />
+          <input
+            required
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </label>
         <label className="lab">
           Email
-          <input type="email" required autoComplete="email" />
+          <input
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
         <label className="lab">
           Message
-          <textarea rows={5} required />
+          <textarea
+            rows={5}
+            required
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
         </label>
         <button className="btn k" type="submit">
-          Send →
+          Send via Instagram →
         </button>
         <p className="mute" style={{ marginTop: 12, fontSize: 12 }}>
-          Demo form — connect to your email/WhatsApp handler before launch.
+          Copies your message, then opens @farfits.pk so you can paste and send.
         </p>
       </form>
     </section>

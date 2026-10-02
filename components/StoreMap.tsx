@@ -2,32 +2,33 @@
 
 import { useEffect, useRef } from "react";
 import type { Map as MapLibreMap } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { STORE } from "@/lib/constants";
 
 const PAPER = "#f3f2ee";
 
 const FILL: Record<string, string> = {
-  park: "#e8e7e2",
-  water: "#dddcd6",
-  landuse_residential: "#ebeae5",
-  landcover_wood: "#e5e4df",
-  building: "#e3e2dd",
-  road_area_pier: "#e3e2dd",
+  park: "#e6e4de",
+  water: "#d8d6cf",
+  landuse_residential: "#eeede8",
+  landcover_wood: "#e3e1db",
+  building: "#e1dfd8",
+  road_area_pier: "#e1dfd8",
 };
 
 const LINE: Record<string, string> = {
-  waterway: "#d2d0c9",
-  road_pier: "#d2d0c9",
-  highway_path: "#dedcd6",
-  highway_minor: "#ffffff",
-  highway_major_casing: "#cecbc4",
-  highway_major_inner: "#ffffff",
-  highway_major_subtle: "#f7f6f3",
-  highway_motorway_casing: "#c6c3bc",
-  highway_motorway_inner: "#fafaf8",
-  highway_motorway_subtle: "#f4f3ef",
-  highway_motorway_bridge_casing: "#c6c3bc",
-  highway_motorway_bridge_inner: "#fafaf8",
+  waterway: "#c8c6be",
+  road_pier: "#c8c6be",
+  highway_path: "#d2d0c8",
+  highway_minor: "#b7b4ab",
+  highway_major_casing: "#9e9b92",
+  highway_major_inner: "#f8f7f4",
+  highway_major_subtle: "#cfcbc3",
+  highway_motorway_casing: "#8f8c84",
+  highway_motorway_inner: "#f6f5f1",
+  highway_motorway_subtle: "#c8c5bd",
+  highway_motorway_bridge_casing: "#8f8c84",
+  highway_motorway_bridge_inner: "#f6f5f1",
 };
 
 function quiet(map: MapLibreMap) {
@@ -86,16 +87,20 @@ export function StoreMap() {
     if (!canvas) return;
 
     let removed = false;
+    let observer: ResizeObserver | null = null;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
 
-    void import("maplibre-gl").then(({ Map, Marker }) => {
+    void import("maplibre-gl").then(({ Map, Marker, setWorkerUrl }) => {
       if (removed || !canvasRef.current) return;
+
+      // Keep public/maplibre in sync with the installed maplibre-gl version.
+      setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
       const map = new Map({
         container: canvasRef.current,
         style: "https://tiles.openfreemap.org/styles/positron",
-        center: [STORE.lng + 0.00115, STORE.lat - 0.00015],
-        zoom: 15.55,
+        center: [STORE.lng + 0.00055, STORE.lat],
+        zoom: 15.85,
         minZoom: 13.5,
         maxZoom: 17.5,
         attributionControl: false,
@@ -106,7 +111,7 @@ export function StoreMap() {
         boxZoom: false,
         doubleClickZoom: false,
         dragPan: !coarse,
-        touchZoomRotate: false,
+        touchZoomRotate: !coarse,
         fadeDuration: 0,
       });
 
@@ -126,11 +131,15 @@ export function StoreMap() {
         map.resize();
       });
 
+      observer = new ResizeObserver(() => map.resize());
+      observer.observe(canvasRef.current);
+
       mapRef.current = map;
     });
 
     return () => {
       removed = true;
+      observer?.disconnect();
       mapRef.current?.remove();
       mapRef.current = null;
     };

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { ShopFilters } from "@/components/ShopFilters";
-import { filterProducts, products } from "@/lib/products";
+import { filterProducts } from "@/lib/products";
 
 export default async function ShopPage(props: PageProps<"/shop">) {
   const sp = await props.searchParams;
@@ -30,7 +30,8 @@ export default async function ShopPage(props: PageProps<"/shop">) {
     <>
       <section className="shophead">
         <p className="lab mute">
-          {category || "Everything"} / {products.length} pairs
+          {category || "Everything"} / {list.length} result
+          {list.length === 1 ? "" : "s"}
         </p>
         <h1 className="disp">Shop All</h1>
       </section>

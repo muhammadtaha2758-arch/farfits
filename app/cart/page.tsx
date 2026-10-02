@@ -9,25 +9,31 @@ import { getProduct } from "@/lib/products";
 
 export default function CartPage() {
   const { cart, remove, toast } = useCart();
-  const items = cart.map((s) => getProduct(s)).filter(Boolean);
-  const total = items.reduce((a, p) => a + (p?.price ?? 0), 0);
-  const msg = encodeURIComponent(
+  const items = cart
+    .map((s) => getProduct(s))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const total = items.reduce((a, p) => a + p.price, 0);
+  const orderText =
     "Hi FARFITS, I'd like to order:\n" +
-      items
-        .map(
-          (p) =>
-            `- ${p!.brand} ${p!.name} (Size ${p!.size}) ${pkr(p!.price)}`,
-        )
-        .join("\n"),
-  );
+    items
+      .map((p) => `- ${p.brand} ${p.name} (Size ${p.size}) ${pkr(p.price)}`)
+      .join("\n") +
+    `\nTotal: ${pkr(total)}`;
 
   async function copyOrder() {
     try {
-      await navigator.clipboard.writeText(decodeURIComponent(msg));
+      await navigator.clipboard.writeText(orderText);
       toast("Order copied");
+      return true;
     } catch {
       toast("Copy not available");
+      return false;
     }
+  }
+
+  async function orderViaInstagram() {
+    await copyOrder();
+    window.open(IG, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -45,48 +51,46 @@ export default function CartPage() {
       <div style={{ maxWidth: 900 }}>
         {items.length ? (
           <>
-            {items.map((p) =>
-              p ? (
-                <div className="row" key={p.slug}>
-                  <ProductImage product={p} ratio="1/1" />
-                  <div>
-                    <b className="lab">{p.brand}</b>
-                    <p style={{ fontWeight: 700, fontSize: 17 }}>{p.name}</p>
-                    <p className="mute">
-                      Size {p.size} · {p.condition}
-                    </p>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <p style={{ fontWeight: 700 }}>{pkr(p.price)}</p>
-                    <button
-                      className="lab mute"
-                      type="button"
-                      style={{ borderBottom: "1px solid" }}
-                      onClick={() => remove(p.slug)}
-                    >
-                      Remove
-                    </button>
-                  </div>
+            {items.map((p) => (
+              <div className="row" key={p.slug}>
+                <ProductImage product={p} ratio="1/1" />
+                <div>
+                  <b className="lab">{p.brand}</b>
+                  <p style={{ fontWeight: 700, fontSize: 17 }}>{p.name}</p>
+                  <p className="mute">
+                    Size {p.size} · {p.condition}
+                  </p>
                 </div>
-              ) : null,
-            )}
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ fontWeight: 700 }}>{pkr(p.price)}</p>
+                  <button
+                    className="lab mute"
+                    type="button"
+                    style={{ borderBottom: "1px solid" }}
+                    onClick={() => remove(p.slug)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
             <div className="sum">
               <span>Total</span>
               <span>{pkr(total)}</span>
             </div>
             <p className="mute" style={{ margin: "14px 0 24px" }}>
-              One-of-one pairs. Checkout is by direct message — confirm size and
-              delivery with us on Instagram. Exchange possible.
+              One-of-one pairs. Checkout is by direct message — we copy your
+              order, then open Instagram so you can paste and confirm. Exchange
+              possible.
             </p>
             <div className="cart-actions">
-              <a
+              <button
                 className="btn k"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={IG}
+                type="button"
+                onClick={orderViaInstagram}
               >
                 Order via Instagram ↗
-              </a>
+              </button>
               <button className="btn l" type="button" onClick={copyOrder}>
                 Copy order
               </button>

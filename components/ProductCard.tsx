@@ -22,44 +22,34 @@ export function ProductCard({
   const { add } = useCart();
 
   return (
-    <Link href={`/product/${product.slug}`} className={className}>
-      <ProductImage product={product} ratio={ratio} />
+    <article className={className}>
+      <Link href={`/product/${product.slug}`} className="card-link">
+        <ProductImage product={product} ratio={ratio} />
+        <div className="meta">
+          <b className="lab">{product.brand}</b>
+          <span className="lab">
+            {product.available ? (
+              <span className="tag">Available</span>
+            ) : (
+              <span className="tag sold">Sold</span>
+            )}
+          </span>
+          <span className="n full">{product.name}</span>
+          <span>
+            Size {product.size} · {product.condition} Condition
+          </span>
+          <span className="n">{pkr(product.price)}</span>
+        </div>
+      </Link>
       {quickAdd && product.available ? (
-        <span
+        <button
+          type="button"
           className="q"
-          role="button"
-          tabIndex={0}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            add(product.slug);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              e.stopPropagation();
-              add(product.slug);
-            }
-          }}
+          onClick={() => add(product.slug)}
         >
           Quick Add
-        </span>
+        </button>
       ) : null}
-      <div className="meta">
-        <b className="lab">{product.brand}</b>
-        <span className="lab">
-          {product.available ? (
-            <span className="tag">Available</span>
-          ) : (
-            <span className="tag sold">Sold</span>
-          )}
-        </span>
-        <span className="n full">{product.name}</span>
-        <span>
-          Size {product.size} · {product.condition} Condition
-        </span>
-        <span className="n">{pkr(product.price)}</span>
-      </div>
-    </Link>
+    </article>
   );
 }

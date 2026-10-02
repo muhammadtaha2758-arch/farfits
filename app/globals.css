@@ -560,20 +560,20 @@ a:hover .ph[data-focus] .crop {
   align-items: start;
 }
 
-.edit > a:nth-child(1) {
+.edit > .card:nth-child(1) {
   grid-column: 1 / 8;
 }
 
-.edit > a:nth-child(2) {
+.edit > .card:nth-child(2) {
   grid-column: 9 / 13;
   margin-top: 18vw;
 }
 
-.edit > a:nth-child(3) {
+.edit > .card:nth-child(3) {
   grid-column: 2 / 6;
 }
 
-.edit > a:nth-child(4) {
+.edit > .card:nth-child(4) {
   grid-column: 7 / 13;
   margin-top: -6vw;
 }
@@ -627,7 +627,7 @@ a:hover .ph[data-focus] .crop {
     scrollbar-width: none;
   }
 
-  .edit > a {
+  .edit > .card {
     flex: 0 0 80% !important;
     margin: 0 !important;
     scroll-snap-align: start;
@@ -665,6 +665,12 @@ a:hover .ph[data-focus] .crop {
   display: block;
 }
 
+.card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .card .q {
   position: absolute;
   left: 0;
@@ -680,15 +686,24 @@ a:hover .ph[data-focus] .crop {
   transform: translateY(101%);
   transition: transform 0.3s;
   z-index: 2;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
 }
 
-.card:hover .q {
+.card:hover .q,
+.card:focus-within .q {
   transform: none;
 }
 
 @media (hover: none) {
   .card .q {
-    display: none;
+    display: block;
+    transform: none;
+    position: static;
+    margin-top: 10px;
+    padding: 14px 12px;
+    min-height: 44px;
   }
 }
 
@@ -733,7 +748,7 @@ a:hover .ph[data-focus] .crop {
   padding: 0;
 }
 
-.visit > div {
+.visit > div:not(.map) {
   padding: clamp(40px, 7vw, 100px) var(--pad);
 }
 
@@ -760,13 +775,17 @@ a:hover .ph[data-focus] .crop {
   overflow: hidden;
 }
 
-.map-canvas {
+.map-canvas,
+.map-canvas.maplibregl-map {
   position: absolute;
   inset: 0;
+  width: auto;
+  height: auto;
+  font-family: var(--font-sans);
 }
 
-.map-canvas .maplibregl-map {
-  font-family: var(--font-sans);
+.map-canvas .maplibregl-marker {
+  z-index: 3;
 }
 
 .map-canvas .maplibregl-canvas-container,
@@ -784,9 +803,12 @@ a:hover .ph[data-focus] .crop {
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background:
-    radial-gradient(ellipse at 46% 52%, transparent 42%, rgba(243, 242, 238, 0.28) 78%, rgba(243, 242, 238, 0.72) 100%),
-    linear-gradient(90deg, rgba(243, 242, 238, 0.35), transparent 18%, transparent 82%, rgba(243, 242, 238, 0.4));
+  background: radial-gradient(
+    ellipse at 46% 50%,
+    transparent 58%,
+    rgba(243, 242, 238, 0.18) 84%,
+    rgba(243, 242, 238, 0.5) 100%
+  );
 }
 
 .map-meta {
@@ -897,11 +919,13 @@ a:hover .ph[data-focus] .crop {
 }
 
 .map-zoom button {
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
   line-height: 1;
   letter-spacing: 0;
+  display: grid;
+  place-items: center;
 }
 
 .map-zoom button + button {
@@ -1777,5 +1801,23 @@ dd {
 
   .btn.full {
     padding: 16px 20px;
+  }
+
+  .form input,
+  .form textarea,
+  #search input {
+    font-size: 16px;
+  }
+
+  .two-c {
+    gap: 36px;
+  }
+
+  .cnt {
+    font-size: 11px;
+  }
+
+  .bar {
+    top: calc(58px + env(safe-area-inset-top, 0px));
   }
 }
