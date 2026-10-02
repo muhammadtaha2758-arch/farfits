@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { products } from "@/lib/products";
 import { useCart } from "./CartProvider";
 
@@ -30,6 +31,40 @@ const NAV = [
   { href: "/about", label: "About", match: { path: "/about" } },
 ] as const;
 
+function NavLinks({
+  pathname,
+  category,
+  onNavigate,
+}: {
+  pathname: string;
+  category: string | null;
+  onNavigate?: () => void;
+}) {
+  return (
+    <>
+      {NAV.map((item) => {
+        const active =
+          pathname === item.match.path &&
+          ("c" in item.match
+            ? item.match.c === null
+              ? !category
+              : category === item.match.c
+            : true);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={active ? "on" : undefined}
+            onClick={onNavigate}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
 function HeaderInner() {
   const pathname = usePathname();
   const router = useRouter();
@@ -39,9 +74,14 @@ function HeaderInner() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [over, setOver] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isHome = pathname === "/";
   const category = searchParams.get("c");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -103,37 +143,38 @@ function HeaderInner() {
     });
   }
 
+  const mobileMenu =
+    mounted &&
+    createPortal(
+      <nav
+        className={`mobile-nav${menuOpen ? " is-open" : ""}`}
+        id="mobile-nv"
+        aria-label="Mobile"
+        aria-hidden={!menuOpen}
+      >
+        <NavLinks
+          pathname={pathname}
+          category={category}
+          onNavigate={() => setMenuOpen(false)}
+        />
+      </nav>,
+      document.body,
+    );
+
   return (
     <>
-      <header className={`site-header${over ? " over" : ""}`} id="hd">
+      <header
+        className={`site-header${over && !menuOpen && !searchOpen ? " over" : ""}${
+          menuOpen ? " is-menu" : ""
+        }`}
+        id="hd"
+      >
         <Link className="logo" href="/" aria-label="FARFITS home">
           <span className="mono">F</span>
           FARFITS
         </Link>
-        <nav
-          className={`main${menuOpen ? " open" : ""}`}
-          id="nv"
-          aria-label="Primary"
-        >
-          {NAV.map((item) => {
-            const active =
-              pathname === item.match.path &&
-              ("c" in item.match
-                ? item.match.c === null
-                  ? !category
-                  : category === item.match.c
-                : true);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={active ? "on" : undefined}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="main desktop-nav" id="nv" aria-label="Primary">
+          <NavLinks pathname={pathname} category={category} />
         </nav>
         <div className="tools lab">
           <button
@@ -155,15 +196,18 @@ function HeaderInner() {
             className="burger"
             id="bg"
             type="button"
-            aria-label="Menu"
+            aria-label={menuOpen ? "Close menu" : "Menu"}
             aria-expanded={menuOpen}
-            aria-controls="nv"
+            aria-controls="mobile-nv"
             onClick={toggleMenu}
           >
-            Menu
+            {menuOpen ? "Close" : "Menu"}
           </button>
         </div>
       </header>
+
+      {mobileMenu}
+
       <div id="search" className={searchOpen ? "open" : undefined}>
         <form onSubmit={onSearchSubmit}>
           <input

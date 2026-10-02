@@ -48,7 +48,17 @@ export function Footer() {
       </div>
       <div className="fb lab">
         <span>© 2026 FARFITS · farfits.pk</span>
-        <span>Authentic thrift footwear</span>
+        <span>
+          Developed by{" "}
+          <a
+            className="credit"
+            href="https://rohtiqlabs.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Rohtiq Labs
+          </a>
+        </span>
       </div>
     </footer>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CONDITIONS, getBrands, getSizes } from "@/lib/products";
 
@@ -9,6 +9,25 @@ const PRICE_OPTS = [
   ["2", "10,000 – 15,000"],
   ["3", "15,000+"],
 ] as const;
+
+type FieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: ReactNode;
+  className?: string;
+};
+
+function Field({ label, value, onChange, children, className }: FieldProps) {
+  return (
+    <label className={className ? `ff ${className}` : "ff"}>
+      <span className="ff-l">{label}</span>
+      <select value={value} onChange={(e) => onChange(e.target.value)}>
+        {children}
+      </select>
+    </label>
+  );
+}
 
 export function ShopFilters() {
   const router = useRouter();
@@ -60,12 +79,11 @@ export function ShopFilters() {
   return (
     <div ref={barRef} className={hidden ? "bar-stick is-hidden" : "bar-stick"}>
       <div className="bar">
-      <div className="fs">
-        <label className="lab">
-          Category{" "}
-          <select
+        <div className="fs">
+          <Field
+            label="Category"
             value={sp.get("c") || ""}
-            onChange={(e) => setFilter("c", e.target.value)}
+            onChange={(v) => setFilter("c", v)}
           >
             <option value="">All</option>
             {["Sneakers", "Men", "Women"].map((o) => (
@@ -73,13 +91,11 @@ export function ShopFilters() {
                 {o}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="lab">
-          Brand{" "}
-          <select
+          </Field>
+          <Field
+            label="Brand"
             value={sp.get("b") || ""}
-            onChange={(e) => setFilter("b", e.target.value)}
+            onChange={(v) => setFilter("b", v)}
           >
             <option value="">All</option>
             {brands.map((o) => (
@@ -87,13 +103,11 @@ export function ShopFilters() {
                 {o}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="lab">
-          Size{" "}
-          <select
+          </Field>
+          <Field
+            label="Size"
             value={sp.get("s") || ""}
-            onChange={(e) => setFilter("s", e.target.value)}
+            onChange={(v) => setFilter("s", v)}
           >
             <option value="">All</option>
             {sizes.map((o) => (
@@ -101,13 +115,11 @@ export function ShopFilters() {
                 {o}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="lab">
-          Condition{" "}
-          <select
+          </Field>
+          <Field
+            label="Condition"
             value={sp.get("k") || ""}
-            onChange={(e) => setFilter("k", e.target.value)}
+            onChange={(v) => setFilter("k", v)}
           >
             <option value="">All</option>
             {CONDITIONS.map((o) => (
@@ -115,13 +127,11 @@ export function ShopFilters() {
                 {o}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="lab">
-          Price{" "}
-          <select
+          </Field>
+          <Field
+            label="Price"
             value={sp.get("p") || ""}
-            onChange={(e) => setFilter("p", e.target.value)}
+            onChange={(v) => setFilter("p", v)}
           >
             <option value="">All</option>
             {PRICE_OPTS.map(([val, label]) => (
@@ -129,20 +139,18 @@ export function ShopFilters() {
                 {label}
               </option>
             ))}
-          </select>
-        </label>
-      </div>
-      <label className="lab">
-        Sort{" "}
-        <select
+          </Field>
+        </div>
+        <Field
+          className="ff-sort"
+          label="Sort"
           value={sp.get("o") || "new"}
-          onChange={(e) => setFilter("o", e.target.value)}
+          onChange={(v) => setFilter("o", v)}
         >
           <option value="new">Newest</option>
           <option value="lo">Price: Low to High</option>
           <option value="hi">Price: High to Low</option>
-        </select>
-      </label>
+        </Field>
       </div>
     </div>
   );
