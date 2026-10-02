@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CONDITIONS, getBrands, getSizes } from "@/lib/products";
 
@@ -12,6 +13,38 @@ const PRICE_OPTS = [
 export function ShopFilters() {
   const router = useRouter();
   const sp = useSearchParams();
+  const barRef = useRef<HTMLDivElement>(null);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+
+    let lastY = window.scrollY;
+    let current = false;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+      const header = document.querySelector("header.site-header");
+      const headerBottom = header?.getBoundingClientRect().bottom ?? 58;
+      const stuck = bar.getBoundingClientRect().top <= headerBottom + 1;
+
+      let next = current;
+      if (!stuck || y < 8) next = false;
+      else if (delta > 6) next = true;
+      else if (delta < -6) next = false;
+
+      if (next !== current) {
+        current = next;
+        setHidden(next);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   function setFilter(key: string, value: string) {
     const q = new URLSearchParams(sp.toString());
@@ -25,7 +58,8 @@ export function ShopFilters() {
   const sizes = getSizes();
 
   return (
-    <div className="bar">
+    <div ref={barRef} className={hidden ? "bar-stick is-hidden" : "bar-stick"}>
+      <div className="bar">
       <div className="fs">
         <label className="lab">
           Category{" "}
@@ -109,6 +143,7 @@ export function ShopFilters() {
           <option value="hi">Price: High to Low</option>
         </select>
       </label>
+      </div>
     </div>
   );
 }

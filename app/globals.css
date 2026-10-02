@@ -620,7 +620,9 @@ a:hover .ph[data-focus] .crop {
   .edit {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    touch-action: pan-y;
+    scroll-snap-type: x proximity;
     gap: 14px;
     margin-inline: calc(var(--pad) * -1);
     padding: 0 var(--pad);
@@ -631,6 +633,11 @@ a:hover .ph[data-focus] .crop {
     flex: 0 0 80% !important;
     margin: 0 !important;
     scroll-snap-align: start;
+  }
+
+  .edit > .card.rv {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -1059,10 +1066,17 @@ footer.site-footer {
   font-size: clamp(48px, 12vw, 190px);
 }
 
-.bar {
+.bar-stick {
   position: sticky;
   top: calc(58px + env(safe-area-inset-top, 0px));
   z-index: 20;
+}
+
+.bar-stick.is-hidden {
+  pointer-events: none;
+}
+
+.bar {
   background: #fff;
   border-block: var(--l);
   display: flex;
@@ -1071,6 +1085,17 @@ footer.site-footer {
   padding: 12px var(--pad);
   flex-wrap: wrap;
   align-items: center;
+  transition: transform 0.35s ease;
+}
+
+.bar-stick.is-hidden .bar {
+  transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
 }
 
 .bar select,
@@ -1817,7 +1842,7 @@ dd {
     font-size: 11px;
   }
 
-  .bar {
+  .bar-stick {
     top: calc(58px + env(safe-area-inset-top, 0px));
   }
 }
