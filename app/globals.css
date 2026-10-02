@@ -620,6 +620,7 @@ a:hover .ph[data-focus] .crop {
   .edit {
     display: flex;
     overflow-x: auto;
+    overflow-y: clip;
     overscroll-behavior-x: contain;
     touch-action: pan-y;
     scroll-snap-type: x proximity;

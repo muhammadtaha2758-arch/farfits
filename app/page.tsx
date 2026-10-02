@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { EditRow } from "@/components/EditRow";
 import { Photo } from "@/components/Photo";
 import { ProductCard } from "@/components/ProductCard";
 import { Visit } from "@/components/Visit";
@@ -91,7 +92,7 @@ export default function HomePage() {
             gone, it&apos;s gone.
           </p>
         </div>
-        <div className="edit">
+        <EditRow>
           {edit.map((p, i) => (
             <ProductCard
               key={p.slug}
@@ -100,7 +101,7 @@ export default function HomePage() {
               ratio={i % 3 === 0 ? "4/5" : "1/1"}
             />
           ))}
-        </div>
+        </EditRow>
       </section>
 
       <section style={{ paddingTop: 0 }}>
