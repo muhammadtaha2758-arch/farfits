@@ -1,10 +1,41 @@
-import Image from "next/image";
 import Link from "next/link";
+import { EditRow } from "@/components/EditRow";
+import { HeroCarousel, type HeroSlide } from "@/components/HeroCarousel";
 import { Photo } from "@/components/Photo";
 import { ProductCard } from "@/components/ProductCard";
 import { Visit } from "@/components/Visit";
 import { IG } from "@/lib/constants";
 import { products } from "@/lib/products";
+
+const HERO_SLIDES: HeroSlide[] = [
+  {
+    src: "/editorial/hero.jpg",
+    alt: "White leather sneaker in low light",
+    eyebrow: "Authentic Thrifted Footwear",
+    line: "Curated. Authentic. Distinct.",
+    cta: "Shop Collection",
+    href: "/shop",
+    position: "center 42%",
+  },
+  {
+    src: "/editorial/hero-shoe.jpg",
+    alt: "Editorial sneaker detail in soft light",
+    eyebrow: "New Season Edit",
+    line: "One of each. When it's gone, it's gone.",
+    cta: "New Arrivals",
+    href: "/new-arrivals",
+    position: "center 48%",
+  },
+  {
+    src: "/editorial/editorial-detail.jpg",
+    alt: "Close detail of thrifted footwear",
+    eyebrow: "Inspected Before Listing",
+    line: "Character you can wear again.",
+    cta: "Browse Sneakers",
+    href: "/shop?c=Sneakers",
+    position: "center 40%",
+  },
+];
 
 const TICKER = [
   "Authentic only",
@@ -31,43 +62,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="bg" data-par="-.15">
-          <Image
-            src="/editorial/hero.jpg"
-            alt="White leather sneaker in low light"
-            fill
-            priority
-            sizes="100vw"
-          />
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(transparent 55%, rgba(0,0,0,.55))",
-          }}
-        />
-        <h1 className="disp">
-          <span className="mask">
-            <span>FAR</span>
-          </span>
-          <span className="mask">
-            <span style={{ animationDelay: "0.12s" }}>FITS</span>
-          </span>
-        </h1>
-        <div className="sub">
-          <div>
-            <p className="lab" style={{ marginBottom: 8 }}>
-              Authentic Thrifted Footwear
-            </p>
-            <p className="serif">Curated. Authentic. Distinct.</p>
-          </div>
-          <Link className="btn" href="/shop">
-            Shop Collection <span>→</span>
-          </Link>
-        </div>
-      </section>
+      <HeroCarousel slides={HERO_SLIDES} />
 
       <div className="ticker lab">
         <div>
@@ -91,7 +86,7 @@ export default function HomePage() {
             gone, it&apos;s gone.
           </p>
         </div>
-        <div className="edit">
+        <EditRow>
           {edit.map((p, i) => (
             <ProductCard
               key={p.slug}
@@ -100,7 +95,7 @@ export default function HomePage() {
               ratio={i % 3 === 0 ? "4/5" : "1/1"}
             />
           ))}
-        </div>
+        </EditRow>
       </section>
 
       <section style={{ paddingTop: 0 }}>

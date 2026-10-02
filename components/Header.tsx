@@ -49,20 +49,8 @@ function HeaderInner() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (!menuOpen) return;
-
-    const y = window.scrollY;
-    root.classList.add("nav-open");
-    document.body.classList.add("nav-open");
-    document.body.style.top = `-${y}px`;
-
-    return () => {
-      root.classList.remove("nav-open");
-      document.body.classList.remove("nav-open");
-      document.body.style.top = "";
-      window.scrollTo({ top: y, left: 0, behavior: "auto" });
-    };
+    document.body.classList.toggle("nav-open", menuOpen);
+    return () => document.body.classList.remove("nav-open");
   }, [menuOpen]);
 
   useEffect(() => {
@@ -117,10 +105,7 @@ function HeaderInner() {
 
   return (
     <>
-      <header
-        className={`site-header${over && !menuOpen ? " over" : ""}`}
-        id="hd"
-      >
+      <header className={`site-header${over ? " over" : ""}`} id="hd">
         <Link className="logo" href="/" aria-label="FARFITS home">
           <span className="mono">F</span>
           FARFITS
@@ -148,14 +133,7 @@ function HeaderInner() {
                 {item.label}
               </Link>
             );
-            })}
-          <button
-            type="button"
-            className="nav-close lab"
-            onClick={() => setMenuOpen(false)}
-          >
-            Close
-          </button>
+          })}
         </nav>
         <div className="tools lab">
           <button
@@ -177,12 +155,12 @@ function HeaderInner() {
             className="burger"
             id="bg"
             type="button"
-            aria-label={menuOpen ? "Close menu" : "Menu"}
+            aria-label="Menu"
             aria-expanded={menuOpen}
             aria-controls="nv"
             onClick={toggleMenu}
           >
-            {menuOpen ? "Close" : "Menu"}
+            Menu
           </button>
         </div>
       </header>
